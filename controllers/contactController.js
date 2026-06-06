@@ -18,6 +18,18 @@ const createContact = async (req, res) => {
       userId: req.user._id,
     };
 
+    const existingContact = await Contact.findOne({
+      userId: req.user._id,
+      email: req.body.email,
+    });
+
+    if (existingContact) {
+      return res.status(400).json({
+        success: false,
+        message: 'Contact with this email already exists for this user',
+      });
+    }
+
     const contact = await Contact.create(contactData);
 
     res.status(201).json({
